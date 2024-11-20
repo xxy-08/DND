@@ -1,12 +1,4 @@
-package edu.nyu.ce.shengwei_zhangce;
-
 import java.net.*;
-
-/**
- * 
- * @author shengweihuang
- * @netid sh6203
- */
 
 public class ChatPortal implements Runnable {
 

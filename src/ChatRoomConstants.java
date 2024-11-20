@@ -1,11 +1,3 @@
-package edu.nyu.ce.shengwei_zhangce;
-
-/**
- * 
- * @author shengweihuang
- * @netID sh6203
- */
-
 public class ChatRoomConstants {
 	public static final String IP_ADDR_1 = "224.0.0.1"; // please revise here if communication is not successful
 	 public static final String IP_ADDR_2 = "224.0.0.2"; // please revise here if communication is not successful

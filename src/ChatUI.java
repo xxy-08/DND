@@ -1,5 +1,3 @@
-package edu.nyu.ce.shengwei_zhangce;
-
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import java.awt.*;

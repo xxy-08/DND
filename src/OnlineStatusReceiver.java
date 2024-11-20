@@ -1,5 +1,3 @@
-package edu.nyu.ce.shengwei_zhangce;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -7,12 +5,6 @@ import java.net.MulticastSocket;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 
- * @author Ce Zhang
- * @netId cz2146
- *
- */
 public class OnlineStatusReceiver implements Runnable {
 	InetAddress ipAddress = null;
 	MulticastSocket socket = null;

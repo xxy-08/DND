@@ -1,12 +1,3 @@
-package edu.nyu.ce.shengwei_zhangce;
-
-/**
- *
- * @author Ce Zhang
- * @netId cz2146
- * 
- */
-
 import static java.lang.Thread.sleep;
 import java.net.*;
 

@@ -1,14 +1,8 @@
-package edu.nyu.ce.shengwei_zhangce;
-
 import java.util.logging.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-/**
- * @author Ce Zhang
- * @netID cz2146
- */
 public class ChatRoomMain extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -97,13 +91,12 @@ public class ChatRoomMain extends JFrame {
 						.addGap(30)
 		);
 
-		pack();  // 自动调整窗口大小
+		pack();
 	}
 
 	public static void main(String args[]) {
 		System.out.println("Hello World!");
 
-		// 启动聊天应用
 		try {
 			for (UIManager.LookAndFeelInfo text : UIManager.getInstalledLookAndFeels()) {
 				if ("Nimbus".equals(text.getName())) {

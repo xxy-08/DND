@@ -1,12 +1,5 @@
-package edu.nyu.ce.shengwei_zhangce;
-
 import javax.swing.*;
 
-/**
- * 
- * @author shengweihuang
- * @netid sh6203
- */
 public class UserClient {
 	public UserClient() {
 		ChatUI.clientName = JOptionPane.showInputDialog("enter your name:");
