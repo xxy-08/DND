@@ -35,7 +35,7 @@ public class OnlineStatusReceiver implements Runnable {
 	}
 
 	public void trycase() throws IOException {
-
+	//TODO: change the usersLabel text
 		DatagramPacket datapacket;
 		byte[] mutibyte = new byte[256];
 		datapacket = new DatagramPacket(mutibyte, mutibyte.length);
@@ -48,12 +48,12 @@ public class OnlineStatusReceiver implements Runnable {
 		if (!arrayex.contains(data) && !data.equals("exited")) {
 			arrayex.add(data);
 
-			if (ChatUI.userTXT.getText().equals(""))
-				ChatUI.userTXT.setText(data);
+			if (ChatUI.usersLabel.getText().equals("Online Users:"))
+				ChatUI.usersLabel.setText(data);
 			else {
-				ChatUI.userTXT.setText("");
+				ChatUI.usersLabel.setText("");
 				for (Object obj : arrayex) {
-					ChatUI.userTXT.setText(ChatUI.userTXT.getText() + obj.toString() + "\n");
+					ChatUI.usersLabel.setText("Online Users: " + ChatUI.usersLabel.getText() + obj.toString() + " ");
 				}
 			}
 		}

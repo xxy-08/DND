@@ -1,117 +1,137 @@
-import java.util.logging.*;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
+import java.util.logging.*;
 
 public class ChatRoomMain extends JFrame {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+    private Image backgroundImage;
 
-	/**
-	 * Creates the Chat application
-	 */
-	public ChatRoomMain() {
+    /**
+     * Creates the Chat application
+     */
+    public ChatRoomMain() {
+        this.setTitle("ChatMainRoom");
+        this.setUndecorated(false);
+        start();
+        this.setLocationRelativeTo(null);
+        setVisible(true);
+        setAlwaysOnTop(true);
+    }
 
-		this.setTitle("ChatMainRoom");
-		this.setUndecorated(false);  // 显示窗口边框
-		start();
-		this.setLocationRelativeTo(null);
-		setVisible(true);
-		setAlwaysOnTop(true);
-	}
+    private JButton loginButton;
+    private JButton exitButton;
+    private JLabel titleLabel;
 
-	// 定义按钮和标签
-	private JButton loginButton;
-	private JButton exitButton;
-	private JLabel titleLabel;
+    /**
+     * This method will be used in the constructor to initialize the form.
+     */
+    private void start() {
+        titleLabel = new JLabel("Welcome to the Dungeons");
+        loginButton = new JButton();
+        exitButton = new JButton();
 
-	/**
-	 * This method will be used in the constructor to initialize the form.
-	 */
-	private void start() {
-		titleLabel = new JLabel("Welcome to  D&D Chat Room");
-		loginButton = new JButton();
-		exitButton = new JButton();
+        // Load the background image (logo.png)
+        backgroundImage = new ImageIcon("logo.png").getImage();
 
-		// 设置登录按钮
-		loginButton.setFont(new Font("Arial", Font.BOLD, 20));
-		loginButton.setText("Login");
-		loginButton.setPreferredSize(new Dimension(200, 50));
-		loginButton.setBackground(new Color(78, 145, 78, 203));  // 设置按钮背景色
-		loginButton.setForeground(Color.WHITE);  // 设置按钮字体颜色
-		loginButton.setFocusPainted(false);  // 去掉按钮边框
-		loginButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				setVisible(false);
-				new UserClient();  // 登录后创建新的客户端窗口
-			}
-		});
+        // Set font and background for buttons
+        loginButton.setFont(new Font("Serif", Font.CENTER_BASELINE, 16));  // Smaller font size
+        loginButton.setText("Login");
+        loginButton.setPreferredSize(new Dimension(120, 40));  // Smaller button size
+        loginButton.setBackground(Color.RED);
+        loginButton.setForeground(Color.BLACK);
+        loginButton.setFocusPainted(false);
+        loginButton.setBorderPainted(false);  // Remove border
+        loginButton.setSize(120, 40);  // Set explicit size
+        loginButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                dispose();  // Close this window
+                new UserClient();  // Continue with the UserClient logic
+            }
+        });
 
-		// 设置退出按钮
-		exitButton.setFont(new Font("Arial", Font.PLAIN, 18));
-		exitButton.setText("Exit");
-		exitButton.setPreferredSize(new Dimension(200, 50));
-		exitButton.setBackground(new Color(218, 95, 95));  // 设置按钮背景色
-		exitButton.setForeground(Color.WHITE);  // 设置按钮字体颜色
-		exitButton.setFocusPainted(false);  // 去掉按钮边框
-		exitButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				System.exit(0);  // 退出应用程序
-			}
-		});
+        exitButton.setFont(new Font("Serif", Font.CENTER_BASELINE, 16));  // Smaller font size
+        exitButton.setText("Exit");
+        exitButton.setPreferredSize(new Dimension(120, 40));  // Smaller button size
+        exitButton.setBackground(Color.GRAY);
+        exitButton.setForeground(Color.BLACK);
+        exitButton.setFocusPainted(false);
+        exitButton.setBorderPainted(false);  // Remove border
+        exitButton.setSize(120, 40);  // Set explicit size
+        exitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                System.exit(0);  // Exit the program
+            }
+        });
 
-		// 设置标题样式
-		titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
-		titleLabel.setForeground(new Color(115, 115, 214));
-		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Serif", Font.ITALIC, 30));
+        titleLabel.setForeground(Color.RED);
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-		// 使用 GroupLayout 布局管理器
-		GroupLayout layout = new GroupLayout(getContentPane());
-		getContentPane().setLayout(layout);
+        // Create a custom JPanel to display the background image
+        JPanel backgroundPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                // Set the background color to black
+                g.setColor(Color.BLACK);
+                g.fillRect(0, 0, getWidth(), getHeight());
+                // Scale the background image to fit the window size
+                g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
 
-		layout.setHorizontalGroup(
-				layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-						.addComponent(titleLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addGroup(layout.createSequentialGroup()
-								.addComponent(loginButton, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE)
-								.addGap(30)
-								.addComponent(exitButton, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE)
-						)
-		);
+        // Set the layout for the background panel
+        GroupLayout layout = new GroupLayout(backgroundPanel);
+        backgroundPanel.setLayout(layout);
 
-		layout.setVerticalGroup(
-				layout.createSequentialGroup()
-						.addGap(40)
-						.addComponent(titleLabel)
-						.addGap(30)
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-								.addComponent(loginButton)
-								.addComponent(exitButton)
-						)
-						.addGap(30)
-		);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                .addComponent(titleLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createSequentialGroup()
+                    .addComponent(loginButton, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)  // Adjusted size
+                    .addGap(30)
+                    .addComponent(exitButton, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)  // Adjusted size
+                )
+        );
 
-		pack();
-	}
+        layout.setVerticalGroup(
+            layout.createSequentialGroup()
+                .addGap(40)
+                .addComponent(titleLabel)
+                .addGap(30)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(loginButton)
+                    .addComponent(exitButton)
+                )
+                .addGap(30)
+        );
 
-	public static void main(String args[]) {
-		System.out.println("Hello World!");
+        setContentPane(backgroundPanel);  // Set the custom panel as the content pane
 
-		try {
-			for (UIManager.LookAndFeelInfo text : UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(text.getName())) {
-					UIManager.setLookAndFeel(text.getClassName());
-					break;
-				}
-			}
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-			Logger.getLogger(ChatRoomMain.class.getName()).log(Level.SEVERE, null, ex);
-		}
+        // Set a fixed size for the window to prevent it from resizing
+        setSize(400, 200);
+        setResizable(false); // Prevent window resizing
+    }
 
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				new ChatRoomMain().setVisible(true);
-			}
-		});
-	}
+    public static void main(String args[]) {
+
+        try {
+            for (UIManager.LookAndFeelInfo text : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(text.getName())) {
+                    UIManager.setLookAndFeel(text.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(ChatRoomMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new ChatRoomMain().setVisible(true);
+            }
+        });
+    }
 }

@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "ChatUI",
+            "request": "launch",
+            "mainClass": "ChatUI",
+            "projectName": "DND_99aa0ca4"
+        },
+        {
+            "type": "java",
+            "name": "ChatRoomMain",
+            "request": "launch",
+            "mainClass": "ChatRoomMain",
+            "projectName": "DND_99aa0ca4"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)",
+            "request": "launch",
+            "mainClass": "ChatRoomMain.java",
+            "vmArgs": "-cp /Users/changshuang/DND/mongodb-jdbc-2.2.0-all.jar"
+        }
+    ]
+}

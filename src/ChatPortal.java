@@ -33,11 +33,8 @@ public class ChatPortal implements Runnable {
 				System.out.println("yes!!!!");
 				byte[] buffer = new byte[BUFFER_SIZE];
 				DatagramPacket datagramPacket = new DatagramPacket(buffer, BUFFER_SIZE);
-				System.out.println("before..");
 				ChatUI.clientSocket.receive(datagramPacket);
-				System.out.println("after..");
 				String message = new String(datagramPacket.getData(), OFFSET, datagramPacket.getLength());
-				System.out.println("text1:" + ChatUI.chatTXT);
 				ChatUI.chatTXT.setText(ChatUI.chatTXT.getText() + NEW_LINE + message);
 				ChatUI.typeTXT.setText("");
 			} catch (Exception exception) {
@@ -49,19 +46,13 @@ public class ChatPortal implements Runnable {
 
 	private void newUser() {
 		
-		
-		System.out.println("hit!!!!!!!!!!!!!!!!!!!!new user!!");
-		String notice = "Welcome " + ChatUI.clientName + " to the chat room";
+		String notice = "Another adventurer comes! Welcome " + ChatUI.clientName + "!";
 		byte[] buffer = notice.getBytes();
 		try {
 			InetAddress hostAddr = InetAddress.getByName(ChatRoomConstants.IP_ADDR_1);
 			DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, hostAddr,
 					ChatRoomConstants.PORT_1);
 			ChatUI.ds.send(datagramPacket);
-			
-			
-			System.out.println("complete new user~!!!!!!!!!!!!!!");
-			
 		} catch (Exception exception) {
 			exception.printStackTrace();
 		}
