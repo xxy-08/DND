@@ -33,7 +33,7 @@ public class ChatRoomMain extends JFrame {
         exitButton = new JButton();
 
         // Load the background image (logo.png)
-        backgroundImage = new ImageIcon("logo.png").getImage();
+        backgroundImage = new ImageIcon("../logo.png").getImage();
 
         // Set font and background for buttons
         loginButton.setFont(new Font("Serif", Font.CENTER_BASELINE, 16));  // Smaller font size
