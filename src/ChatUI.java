@@ -1,38 +1,29 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.net.*;
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
-// import java.util.Random; // 注释掉 Random 的导入
+import javax.swing.text.*;
+import java.net.*;
+import java.util.Random;
 
 public class ChatUI extends JFrame {
 
-	private static final long serialVersionUID = 1L;
-	private JButton enterButton;
-	private JButton exitButton;
-	// private JButton diceButton; // 注释掷骰子按钮
-	private JScrollPane chatScroll;
-	private JScrollPane typeScroll;
-	private JScrollPane userScroll;
-	private JLabel typeLabel;
-	// private JLabel userLabel;
-	public static JTextArea chatTXT;
-	public static JTextArea typeTXT;
-	public static JTextArea multiTXT;
+	public static final long serialVersionUID = 1L;
 
-	public static JLabel usersLabel;
-
+	public static JButton enterButton, exitButton, searchButton;
+	public static JComboBox<String> diceComboBox;
+	public static JScrollPane chatScroll, typeScroll, userScroll;
+	public static JLabel typeLabel, usersLabel;
+	public static JTextArea chatTXT, typeTXT, multiTXT;
+	public static JTextField searchField, diceCountField;
 	public static String msg;
-	public static String clientName;
+	public static String clientName = "User";
 	public static DatagramSocket ds;
 	public static MulticastSocket clientSocket;
 	public static InetAddress targetAddr;
 
-	// private Timer diceTimer; // 注释 Timer
-
 	public ChatUI() {
 		setTitle("Chat Room");
-		setSize(600, 500);
+		setSize(700, 500);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		getContentPane().setBackground(Color.BLACK);
 		setLocationRelativeTo(null);
@@ -40,177 +31,191 @@ public class ChatUI extends JFrame {
 		initUI();
 		setVisible(true);
 	}
+	// 创建按钮时设置相同的尺寸
+	private JButton createButton(String text, int width, int height) {
+		JButton button = new JButton(text);
+		button.setFont(new Font("Serif", Font.ITALIC, 18));
+		button.setBackground(Color.RED);
+		button.setForeground(Color.BLACK);
+		button.setPreferredSize(new Dimension(width, height)); // 设置相同的大小
+		return button;
+	}
 
 	private void initUI() {
-		enterButton = new JButton("Send");
-		enterButton.setFont(new Font("Serif", Font.ITALIC, 18));
-		enterButton.setBackground(Color.RED);
-		enterButton.setForeground(Color.BLACK);
+		// 使用 createButton 方法创建按钮并设置尺寸为 100x40
+		enterButton = createButton("Send", 100, 40);
 		enterButton.addActionListener(this::sendMessage);
 
-		exitButton = new JButton("Exit");
-		exitButton.setFont(new Font("Serif", Font.ITALIC, 18));
-		exitButton.setBackground(Color.GRAY);
-		exitButton.setForeground(Color.BLACK);
+		exitButton = createButton("Exit", 100, 40);
+		exitButton.setBackground(Color.GRAY); // 可以设置每个按钮不同的颜色
 		exitButton.addActionListener(this::exitChat);
 
-		// diceButton = new JButton("Roll Dice"); // 注释掷骰子按钮初始化
-		// diceButton.setFont(new Font("Serif", Font.ITALIC, 16));
-		// diceButton.setBackground(new Color(66, 135, 245));
-		// diceButton.setForeground(Color.BLACK);
-		// diceButton.addActionListener(this::startDiceAnimation); // 注释监听器
+		String[] diceOptions = {"4-sided", "6-sided", "8-sided", "10-sided", "12-sided", "20-sided"};
+		diceComboBox = new JComboBox<>(diceOptions);
+		diceComboBox.setFont(new Font("Serif", Font.ITALIC, 16));
+		diceComboBox.setPreferredSize(new Dimension(100, 40)); // 设置 JComboBox 大小为 100x40
+
+		diceCountField = new JTextField("1", 5);
+		diceCountField.setFont(new Font("Serif", Font.ITALIC, 16));
+
+		// 使用 createButton 创建骰子按钮
+		JButton rollButton = createButton("Roll Dice", 100, 40);
+		rollButton.addActionListener(this::rollDice);
 
 		chatTXT = new JTextArea();
 		chatTXT.setEditable(false);
 		chatTXT.setFont(new Font("SansSerif", Font.PLAIN, 14));
 		chatScroll = new JScrollPane(chatTXT);
-		chatScroll.setBorder(BorderFactory.createTitledBorder("Chat"));
 
 		typeTXT = new JTextArea(3, 30);
-		typeTXT.setFont(new Font("SansSerif", Font.PLAIN, 14));
-		String placeholder = "Role play here...";
-        typeTXT.setForeground(Color.GRAY);
-		typeTXT.setText(placeholder);
-		typeTXT.addFocusListener(new FocusListener() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				if (typeTXT.getText().equals(placeholder)) {
-					typeTXT.setText("");
-					typeTXT.setForeground(Color.BLACK);
-				}
-			}
-
-			@Override
-			public void focusLost(FocusEvent e) {
-				if (typeTXT.getText().isEmpty()) {
-					typeTXT.setForeground(Color.GRAY);
-					typeTXT.setText(placeholder);
-				}
-			}
-		});
 		typeScroll = new JScrollPane(typeTXT);
 
 		multiTXT = new JTextArea();
 		multiTXT.setEditable(false);
-		multiTXT.setFont(new Font("SansSerif", Font.PLAIN, 12));
 		userScroll = new JScrollPane(multiTXT);
 
 		usersLabel = new JLabel("Online Users:");
 		usersLabel.setFont(new Font("Serif", Font.BOLD, 24));
-		usersLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		usersLabel.setForeground(Color.GRAY);
-		//TODO: original string not display:
-		usersLabel.setText("Online Users: ");
+
+		searchField = new JTextField(15);
+		searchButton = createButton("Search", 100, 40);
+		searchButton.addActionListener(this::searchMessage);
 
 		GroupLayout layout = new GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
-		layout.setHorizontalGroup(layout.createParallelGroup(Alignment.CENTER)
-				.addComponent(usersLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+		layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addComponent(usersLabel)
 				.addGroup(layout.createSequentialGroup()
 						.addGap(10)
 						.addComponent(chatScroll, 400, 400, 400)
-						.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
 						.addComponent(userScroll, 160, 160, 160)
 						.addGap(10))
 				.addGroup(layout.createSequentialGroup()
-						.addGap(10)
-						.addComponent(typeScroll, 400, 400, 400)
-						.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-						.addComponent(enterButton, 80, 80, 80)
-						// .addGap(10) // 注释掷骰子按钮布局
-						// .addComponent(diceButton, 100, 100, 100) 
-						.addGap(10)
-						.addComponent(exitButton, 80, 80, 80)
-						.addGap(10))
+						.addComponent(searchField)
+						.addComponent(searchButton))
+				.addGroup(layout.createSequentialGroup()
+						.addComponent(typeScroll)
+						.addComponent(enterButton)
+						.addComponent(diceComboBox)
+						.addComponent(diceCountField)
+						.addComponent(rollButton)
+						.addComponent(exitButton))
 		);
 
 		layout.setVerticalGroup(layout.createSequentialGroup()
-				.addGap(10)
 				.addComponent(usersLabel)
-				.addGap(10)
-				.addGroup(layout.createParallelGroup(Alignment.LEADING)
-						.addComponent(chatScroll, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
-						.addComponent(userScroll, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE))
-				.addGap(10)
-				.addGroup(layout.createParallelGroup(Alignment.LEADING, false)
-						.addComponent(typeScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(enterButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						// .addComponent(diceButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(exitButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				.addGap(10)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(chatScroll)
+						.addComponent(userScroll))
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(searchField)
+						.addComponent(searchButton))
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+						.addComponent(typeScroll)
+						.addComponent(enterButton)
+						.addComponent(diceComboBox)
+						.addComponent(diceCountField)
+						.addComponent(rollButton)
+						.addComponent(exitButton))
 		);
 
 		pack();
+		setSize(700, 550);
+		diceComboBox.setPreferredSize(new Dimension(100, 40));
+		diceCountField.setFont(new Font("Serif", Font.ITALIC, 16));
+	}
+
+	private void searchMessage(ActionEvent e) {
+		String keyword = searchField.getText().trim();
+		if (keyword.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Please enter a keyword.", "Info", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+
+		try {
+			Highlighter highlighter = chatTXT.getHighlighter();
+			highlighter.removeAllHighlights();
+			String text = chatTXT.getText();
+			int index = text.indexOf(keyword);
+			while (index >= 0) {
+				int end = index + keyword.length();
+				highlighter.addHighlight(index, end, new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW));
+				index = text.indexOf(keyword, end);
+			}
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(this, "Error highlighting text.", "Error", JOptionPane.ERROR_MESSAGE);
+			ex.printStackTrace();
+		}
 	}
 
 	private void sendMessage(ActionEvent e) {
 		String txt = typeTXT.getText().trim();
 		if (!txt.isEmpty()) {
 			msg = clientName + ": " + txt;
-			try {
-				byte[] buffer = msg.getBytes();
-				InetAddress hostAddr = InetAddress.getByName(ChatRoomConstants.IP_ADDR_1);
-				DatagramPacket packet = new DatagramPacket(buffer, buffer.length, hostAddr, ChatRoomConstants.PORT_1);
-				ds.send(packet);
-				chatTXT.append(msg + "\n");
-				typeTXT.setText("");
-			} catch (Exception exception) {
-				JOptionPane.showMessageDialog(this, "Failed to send message", "Error", JOptionPane.ERROR_MESSAGE);
-				exception.printStackTrace();
-			}
+			chatTXT.append(msg + "\n");
+			typeTXT.setText("");
 		}
 	}
 
-	// private void startDiceAnimation(ActionEvent e) { // 注释掷骰子动画方法
-	// 	Random random = new Random();
-	// 	int[] counter = {0};
+	private void rollDice(ActionEvent e) {
+		String selectedDice = (String) diceComboBox.getSelectedItem();
+		int diceType = Integer.parseInt(selectedDice.split("-")[0]);
+		int times;
+		try {
+			times = Integer.parseInt(diceCountField.getText().trim());
+			if (times <= 0) {
+				throw new NumberFormatException("Non-positive number.");
+			}
+		} catch (NumberFormatException ex) {
+			JOptionPane.showMessageDialog(this, "Please enter a valid positive number for dice rolls.", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 
-	// 	diceTimer = new Timer(100, new ActionListener() {
-	// 		@Override
-	// 		public void actionPerformed(ActionEvent evt) {
-	// 			int diceResult = random.nextInt(6) + 1;
-	// 			chatTXT.append(clientName + " is rolling... " + diceResult + "\n");
-	// 			counter[0]++;
-
-	// 			if (counter[0] >= 10) {
-	// 				diceTimer.stop();
-	// 				showDiceResult(diceResult);
-	// 			}
-	// 		}
-	// 	});
-
-	// 	diceTimer.start();
-	// }
-
-	// private void showDiceResult(int diceResult) { // 注释掷骰子结果方法
-	// 	String resultMsg = clientName + " rolled a dice and got: " + diceResult;
-	// 	chatTXT.append(resultMsg + "\n");
-
-	// 	try {
-	// 		byte[] buffer = resultMsg.getBytes();
-	// 		InetAddress hostAddr = InetAddress.getByName(ChatRoomConstants.IP_ADDR_1);
-	// 		DatagramPacket packet = new DatagramPacket(buffer, buffer.length, hostAddr, ChatRoomConstants.PORT_1);
-	// 		ds.send(packet);
-	// 	} catch (Exception exception) {
-	// 		exception.printStackTrace();
-	// 	}
-	// }
+		Random random = new Random();
+		StringBuilder resultMsg = new StringBuilder(clientName + " rolled " + times + " times with a " + selectedDice + " dice: ");
+		for (int i = 0; i < times; i++) {
+			int diceResult = random.nextInt(diceType) + 1;
+			resultMsg.append(diceResult).append(i == times - 1 ? "." : ", ");
+		}
+		chatTXT.append(resultMsg.toString() + "\n");
+	}
 
 	private void exitChat(ActionEvent e) {
+		// Notify others that the user has left the chat
+		String txt = clientName + " exits from the chatting room";
+		byte[] buffer = txt.getBytes();
+
 		try {
-			String exitMsg = clientName + " has left the room";
-			byte[] buffer = exitMsg.getBytes();
-			InetAddress hostAddr = InetAddress.getByName(ChatRoomConstants.IP_ADDR_1);
-			DatagramPacket packet = new DatagramPacket(buffer, buffer.length, hostAddr, ChatRoomConstants.PORT_1);
-			ds.send(packet);
+			// Send message to the first address
+			InetAddress hostAddr1 = InetAddress.getByName(ChatRoomConstants.IP_ADDR_1);
+			DatagramPacket p1 = new DatagramPacket(buffer, buffer.length, hostAddr1, ChatRoomConstants.PORT_1);
+			ds.send(p1);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
+
+		try {
+			// Send message to the second address
+			InetAddress hostAddr2 = InetAddress.getByName(ChatRoomConstants.IP_ADDR_2);
+			DatagramPacket p2 = new DatagramPacket(buffer, buffer.length, hostAddr2, ChatRoomConstants.PORT_2);
+			ds.send(p2);
+
+			// Leave the multicast group and close the socket
 			clientSocket.leaveGroup(targetAddr);
 			ds.close();
 		} catch (Exception exception) {
 			exception.printStackTrace();
 		}
+
+		// Hide the current chat window and show the main chat window (or wherever you want to redirect)
 		setVisible(false);
-		new ChatRoomMain().setVisible(true);
+
+		// Show the main chat room interface
+		ChatRoomMain chatMain = new ChatRoomMain();
+		chatMain.setVisible(true);
 	}
+
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(ChatUI::new);

@@ -8,9 +8,9 @@ public class ChatPortal implements Runnable {
 
 	public ChatPortal() {
 		try {
+			// 使用 ChatUI 中的静态变量
 			ChatUI.clientSocket = new MulticastSocket(ChatRoomConstants.PORT_1);
 			ChatUI.ds = new DatagramSocket();
-
 			ChatUI.targetAddr = InetAddress.getByName(ChatRoomConstants.IP_ADDR_1);
 			ChatUI.clientSocket.joinGroup(ChatUI.targetAddr);
 		} catch (Exception exception) {
@@ -20,33 +20,31 @@ public class ChatPortal implements Runnable {
 
 	@Override
 	public void run() {
+		// 启动两个线程
 		Thread onlineStatusThread = new Thread(new OnlineStatus());
 		onlineStatusThread.start();
 		Thread onlineStatusReceiverThread = new Thread(new OnlineStatusReceiver());
 		onlineStatusReceiverThread.start();
-		newUser();
+		newUser(); // 发送欢迎信息
 
+		// 接收消息并更新聊天界面
 		while (true) {
 			try {
-				
-				
-				System.out.println("yes!!!!");
 				byte[] buffer = new byte[BUFFER_SIZE];
 				DatagramPacket datagramPacket = new DatagramPacket(buffer, BUFFER_SIZE);
-				ChatUI.clientSocket.receive(datagramPacket);
+				ChatUI.clientSocket.receive(datagramPacket); // 接收消息
 				String message = new String(datagramPacket.getData(), OFFSET, datagramPacket.getLength());
 				ChatUI.chatTXT.setText(ChatUI.chatTXT.getText() + NEW_LINE + message);
-				ChatUI.typeTXT.setText("");
+				ChatUI.typeTXT.setText(""); // 清空输入框
 			} catch (Exception exception) {
-				System.out.println("errr...");
 				exception.printStackTrace();
 			}
 		}
 	}
 
 	private void newUser() {
-		
-		String notice = "Another adventurer comes! Welcome " + ChatUI.clientName + "!";
+		// 发送新用户加入的消息
+		String notice = "Another adventurer comes! Welcome " + ChatUI.clientName + "!\n";
 		byte[] buffer = notice.getBytes();
 		try {
 			InetAddress hostAddr = InetAddress.getByName(ChatRoomConstants.IP_ADDR_1);
@@ -56,7 +54,6 @@ public class ChatPortal implements Runnable {
 		} catch (Exception exception) {
 			exception.printStackTrace();
 		}
-
 	}
 
 }
