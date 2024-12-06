@@ -1,9 +1,9 @@
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.text.*;
 import java.net.*;
 import java.util.Random;
+import javax.swing.*;
+import javax.swing.text.*;
 
 public class ChatUI extends JFrame {
 
@@ -31,34 +31,32 @@ public class ChatUI extends JFrame {
 		initUI();
 		setVisible(true);
 	}
-	// 创建按钮时设置相同的尺寸
+	
 	private JButton createButton(String text, int width, int height) {
 		JButton button = new JButton(text);
 		button.setFont(new Font("Serif", Font.ITALIC, 18));
 		button.setBackground(Color.RED);
 		button.setForeground(Color.BLACK);
-		button.setPreferredSize(new Dimension(width, height)); // 设置相同的大小
+		button.setPreferredSize(new Dimension(width, height));
 		return button;
 	}
 
 	private void initUI() {
-		// 使用 createButton 方法创建按钮并设置尺寸为 100x40
 		enterButton = createButton("Send", 100, 40);
 		enterButton.addActionListener(this::sendMessage);
 
 		exitButton = createButton("Exit", 100, 40);
-		exitButton.setBackground(Color.GRAY); // 可以设置每个按钮不同的颜色
+		exitButton.setBackground(Color.GRAY);
 		exitButton.addActionListener(this::exitChat);
 
 		String[] diceOptions = {"4-sided", "6-sided", "8-sided", "10-sided", "12-sided", "20-sided"};
 		diceComboBox = new JComboBox<>(diceOptions);
 		diceComboBox.setFont(new Font("Serif", Font.ITALIC, 16));
-		diceComboBox.setPreferredSize(new Dimension(100, 40)); // 设置 JComboBox 大小为 100x40
+		diceComboBox.setPreferredSize(new Dimension(100, 40));
 
 		diceCountField = new JTextField("1", 5);
 		diceCountField.setFont(new Font("Serif", Font.ITALIC, 16));
 
-		// 使用 createButton 创建骰子按钮
 		JButton rollButton = createButton("Roll Dice", 100, 40);
 		rollButton.addActionListener(this::rollDice);
 

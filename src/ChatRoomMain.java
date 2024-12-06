@@ -36,14 +36,13 @@ public class ChatRoomMain extends JFrame {
         backgroundImage = new ImageIcon("../logo.png").getImage();
 
         // Set font and background for buttons
-        loginButton.setFont(new Font("Serif", Font.CENTER_BASELINE, 16));  // Smaller font size
+        loginButton.setFont(new Font("Serif", Font.CENTER_BASELINE, 16));
         loginButton.setText("Login");
-        loginButton.setPreferredSize(new Dimension(120, 40));  // Smaller button size
-        loginButton.setBackground(Color.RED);
+        loginButton.setPreferredSize(new Dimension(120, 40));
         loginButton.setForeground(Color.BLACK);
         loginButton.setFocusPainted(false);
-        loginButton.setBorderPainted(false);  // Remove border
-        loginButton.setSize(120, 40);  // Set explicit size
+        loginButton.setBorderPainted(false); 
+        loginButton.setSize(120, 40);
         loginButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 dispose();  // Close this window
@@ -51,17 +50,17 @@ public class ChatRoomMain extends JFrame {
             }
         });
 
-        exitButton.setFont(new Font("Serif", Font.CENTER_BASELINE, 16));  // Smaller font size
+        exitButton.setFont(new Font("Serif", Font.CENTER_BASELINE, 16));
         exitButton.setText("Exit");
-        exitButton.setPreferredSize(new Dimension(120, 40));  // Smaller button size
+        exitButton.setPreferredSize(new Dimension(120, 40));
         exitButton.setBackground(Color.GRAY);
         exitButton.setForeground(Color.BLACK);
         exitButton.setFocusPainted(false);
-        exitButton.setBorderPainted(false);  // Remove border
-        exitButton.setSize(120, 40);  // Set explicit size
+        exitButton.setBorderPainted(false);
+        exitButton.setSize(120, 40);
         exitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                System.exit(0);  // Exit the program
+                System.exit(0); 
             }
         });
 

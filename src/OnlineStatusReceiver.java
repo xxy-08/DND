@@ -35,27 +35,25 @@ public class OnlineStatusReceiver implements Runnable {
 	}
 
 	public void trycase() throws IOException {
-	//TODO: change the usersLabel text
 		DatagramPacket datapacket;
 		byte[] mutibyte = new byte[256];
 		datapacket = new DatagramPacket(mutibyte, mutibyte.length);
-
+	
 		socket.receive(datapacket);
-
-		String data = new String(datapacket.getData(), 0, datapacket.getLength());
-		if (data.equals("exited"))
-			arrayex = new ArrayList<>();
-		if (!arrayex.contains(data) && !data.equals("exited")) {
+	
+		String data = new String(datapacket.getData(), 0, datapacket.getLength()).trim();
+		if (data.endsWith("exits from the chatting room")) {
+			String exitingUser = data.replace(" exits from the chatting room", "").trim();
+			arrayex.remove(exitingUser);
+		} else if (!arrayex.contains(data)) {
 			arrayex.add(data);
-
-			if (ChatUI.usersLabel.getText().equals("Online Users:"))
-				ChatUI.usersLabel.setText(data);
-			else {
-				ChatUI.usersLabel.setText("");
-				for (Object obj : arrayex) {
-					ChatUI.usersLabel.setText("Online Users: " + ChatUI.usersLabel.getText() + obj.toString() + " ");
-				}
-			}
 		}
-	}
+	
+		StringBuilder userListBuilder = new StringBuilder("Online Users：");
+		for (Object obj : arrayex) {
+			userListBuilder.append(obj.toString()).append(" ");
+		}
+	
+		ChatUI.usersLabel.setText(userListBuilder.toString().trim());
+	}	
 }

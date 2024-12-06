@@ -1,8 +1,11 @@
 {
     "java.project.referencedLibraries": [
-        "lib/**/*.jar",
-        "mongodb-jdbc-2.2.0-all.jar",
+        "/Users/changshuang/DND/mongodb-jdbc-2.2.0-all.jar",
         "/Users/changshuang/Downloads/mongo-java-driver-3.12.14.jar"
     ],
-    "java.compile.nullAnalysis.mode": "automatic"
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.project.sourcePaths": [
+        "src"
+    ],
+    "java.project.outputPath": "out"
 }
